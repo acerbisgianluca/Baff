@@ -1,7 +1,5 @@
 ## Find battles on your favourite games directly from Discord and win the fight. [Add me to your server](https://discordapp.com/oauth2/authorize?client_id=514097295420030977&scope=bot&permissions=268524625)!
 
-![Mustache](https://storage.googleapis.com/replit/images/1543232722939_67b098130afee2342fb3d23a2dbddb59.jpe)
-
 Baff is a simple **Discord matchmaker bot** which can help you to find other players to combat with.
 It currently supports these games:
 * Call Of Duty: Black Ops 4 (1v1, 2v2, 5v5);
@@ -12,7 +10,7 @@ It currently supports these games:
 **Note: make sure to allow friend request from ALL! It may happen that you see random digits instead of user's tag because of his privacy settings, so just copy his tag (as plain text) and manually add him to your friends.**
 
 ### How to use
-![using Baff Bot](https://storage.googleapis.com/replit/images/1543184507109_3306a0a8b46eb8fa4e1ced87685f130c.gi)
+![using Baff Bot](https://i.imgur.com/bea5Ptd.gif)
 In order to get into a DM channel with the bot, **you have to type 'bb text me' in a server text-channel** where the bot can both read and write messages. After that, you'll be directly contacted by the bot so the server channels doesn't become clogged.
 The main commands supported by the bot are (just inside DM):
 * **play**: you'll be asked some information in order to find a match;
