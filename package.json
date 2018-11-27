@@ -1,0 +1,26 @@
+{
+	"name": "baffbot",
+	"version": "1.0.0",
+	"description": "Baff Discord BOT",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"baff",
+		"bot",
+		"discord",
+		"node"
+	],
+	"author": "Acerbis Gianluca",
+	"license": "MIT",
+	"dependencies": {
+		"discord.js": "11.4.2",
+		"lowdb": "1.0.0",
+		"express": "4.16.4",
+		"cryptr": "4.0.1",
+		"igdb-api-node": "3.1.7",
+		"shortid": "2.2.14"
+	}
+}
