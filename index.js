@@ -1,4 +1,4 @@
-const keepAlive = require('./keepAlive.js');
+const keepAlive = require('./website/keepAlive.js');
 const bot = require('./discord/bot.js');
 
 process.on('SIGTERM', () => {
