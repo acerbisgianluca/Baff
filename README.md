@@ -10,8 +10,13 @@ It currently supports these games:
 **Note: make sure to allow friend request from ALL! It may happen that you see random digits instead of user's tag because of his privacy settings, so just copy his tag (as plain text) and manually add him to your friends.**
 
 ## [How To Use Baff Bot](https://i.imgur.com/bea5Ptd.gifv)
-In order to get into a DM channel with the bot, **you have to type 'bb text me' in a server text-channel** where the bot can both read and write messages. After that, you'll be directly contacted by the bot so the server channels doesn't become clogged.
-The main commands supported by the bot are (just inside DM):
+In order to get into a DM channel with the bot, **you have to type 'bb text me' in a server text-channel** where the bot can both read and write messages. After that, you'll be directly contacted by Baff so server channels don't become clogged.
+
+In a server Baff only understands 2 commands:
+* **bb text me**: you'll be contacted by Baff in DM;
+* **bb help me**: you'll be showed more instructions.
+
+The main commands supported by the bot inside private chats are:
 * **play**: you'll be asked some information in order to find a match;
 * **end**: you'll be asked to tell if you've won, lost or drew;
 * **cancel**: Baff will cancel the operation you were doing. If you've already been matched, your opponent will be asked to agree or you've to give the win;
