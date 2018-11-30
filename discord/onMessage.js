@@ -20,6 +20,10 @@ module.exports = msg => {
 			msg.reply(`I've contacted you in DM!`);
 			db.setLastCommand(user.id, { cmd: 'started', arg: '' });
 		}
+		if(txt === 'bb help me'){
+			msg.reply(`hey! I currently work only in DM, so type **bb text me** in a text-channel and you will receive a private message in your inbox!\nOnce you've opened our private chat you can use only these commands:\n${supportedCommandsToString()}`);
+			db.setLastCommand(user.id, { cmd: 'started', arg: '' });
+		}
 	}
 	else {
 		if (user.lastCommand.cmd) {
@@ -59,7 +63,9 @@ module.exports = msg => {
 				return;
 			}
 			if (txt === 'help') {
-				chat.send(`These are the supported commands:\n${supportedCommandsToString()}`)
+				chat.send(`These are the supported commands:\n${supportedCommandsToString()}`);
+				if (!user.isPlaying)
+					db.setLastCommand(user.id, { cmd: 'started', arg: '' });
 				return;
 			}
 			switch (user.lastCommand.cmd) {
