@@ -1,22 +1,6 @@
-// Crypto package
-const Cryptr = require('cryptr');
-const cryptr = new Cryptr(process.env.CRYPTATION_KEY);
-
-// Games db - for the future
-//const igdb = require('igdb-api-node').default;
-//const ig = igdb(process.env.IGDB_TOKEN);
-
-// Local db
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
 const shortid = require('shortid');
-const adapter = new FileSync('db.json', {
-	serialize: (data) => cryptr.encrypt(JSON.stringify(data)),
-	deserialize: (data) => JSON.parse(cryptr.decrypt(data))
-});
-const db = low(adapter);
-db.defaults({ guilds: [], globalMatches: [], users: [] }).write();
 
+let db;
 let client;
 
 // Supported games
@@ -98,7 +82,7 @@ function matchReportWrong(player1, player2) {
 function opponentReported(mustReport) {
 	let playerMustReport = client.users.get(mustReport);
 
-	playerMustReport.send(`**Your opponent has already reported!** Type 'end' to report.`);
+	playerMustReport.send(`**Your opponent has just reported!** Type 'end' to report.`);
 }
 
 function askForCancel(player1, player2) {
@@ -123,9 +107,9 @@ function opponentRefuseToCancel(player1, player2) {
 	opponent.send(`Ops! **${host} (${host.tag}) ️️️has refused to cancel the match.** You need to give him a win typing 'end' or you must play the match.`);
 }
 
-function waitForReport(player, result){
+function waitForReport(player, result) {
 	player = client.users.get(player);
-	switch(result){
+	switch (result) {
 		case 'win':
 			player.send(`Woo nice, just wait your opponent report!`);
 			break;
@@ -209,11 +193,14 @@ module.exports = {
 					}
 					else {
 						db.get('globalMatches').find({ id: match.id }).assign({ opponentReport: '' }).write();
+						db.get('users').find({ id: match.host }).assign({ lastCommand: obj }).write();
+						db.get('users').find({ id: match.opponent }).assign({ lastCommand: obj }).write();
 						matchReportWrong(match.host, match.opponent);
 					}
 				}
 				else {
 					db.get('globalMatches').find({ id: match.id }).assign({ hostReport: obj.arg }).write();
+					db.get('users').find({ id: match.host }).assign({ lastCommand: obj }).write();
 					waitForReport(userId, obj.arg);
 					opponentReported(match.opponent);
 				}
@@ -241,14 +228,27 @@ module.exports = {
 				}
 				else {
 					db.get('globalMatches').find({ id: match.id }).assign({ hostReport: '' }).write();
+					db.get('users').find({ id: match.host }).assign({ lastCommand: obj }).write();
+					db.get('users').find({ id: match.opponent }).assign({ lastCommand: obj }).write();
 					matchReportWrong(match.host, match.opponent);
 				}
 			}
 			else {
 				db.get('globalMatches').find({ id: match.id }).assign({ opponentReport: obj.arg }).write();
+				db.get('users').find({ id: match.opponent }).assign({ lastCommand: obj }).write();
 				waitForReport(userId, obj.arg);
 				opponentReported(match.host);
 			}
+		}
+		else if (obj.cmd === 'askForReport') {
+			db.get('users').find({ id: userId }).assign({ lastCommand: obj }).write();
+			let match = db.get('globalMatches').find({ host: userId, isPlaying: true, isEnded: false }).value();
+			if (match)
+				return true;
+			match = db.get('globalMatches').find({ opponent: userId, isPlaying: true, isEnded: false }).value();
+			if (match)
+				return true;
+			return false;
 		}
 		else
 			db.get('users').find({ id: userId }).assign({ lastCommand: obj }).write();
@@ -312,20 +312,6 @@ module.exports = {
 		return addedGuild;
 	},
 	getGame: function (gameName) {
-		/*return ig.games({
-			fields: ['name', 'popularity', 'game_modes'],
-			limit: 1,
-			order: 'popularity:desc',
-			search: gameName
-		}).then(response => {
-			console.log(response.body[0]);
-			supportedGames.forEach(el => {
-				if (el.name === response.body[0].name)
-					return el;
-				return '';
-			});
-		});*/
-
 		for (let i = 0; i < supportedGames.length; i++) {
 			if (supportedGames[i].name.toLowerCase().includes(gameName) || supportedGames[i].nicknames.includes(gameName))
 				return supportedGames[i];
@@ -340,5 +326,8 @@ module.exports = {
 	},
 	setClient: function (discordClient) {
 		client = discordClient;
+	},
+	setDb: function (globalDb) {
+		db = globalDb;
 	}
 }
