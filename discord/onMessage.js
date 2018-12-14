@@ -17,11 +17,15 @@ module.exports = msg => {
 	if (msg.guild) {
 		if(txt === 'bb text me'){
 			msg.author.send(`Hey ${msg.author.username}, welcome to Baff Bot! I'll help you to play matches against other Discord users.\nTell me 'play' and you'll be asked some information to start looking for worthy players! Don't forget that if you have any problems, just type 'help'.\nMake sure to **allow friend request from ALL! It may happen that you see random numbers instead of user tag because of his privacy settings, so just copy his tag (as plain text) and manually search him.**`);
-			msg.reply(`I've contacted you in DM!`);
+			msg.reply(`I've contacted you in DM!`).catch(() => {
+				return;
+			});
 			db.setLastCommand(user.id, { cmd: 'started', arg: '' });
 		}
 		if(txt === 'bb help me'){
-			msg.reply(`hey! I currently work only in DM, so type **bb text me** in a text-channel and you will receive a private message in your inbox!\nOnce you've opened our private chat you can use only these commands:\n${supportedCommandsToString()}`);
+			msg.reply(`Hey! I currently work only in DM, so type **bb text me** in a text-channel and you will receive a private message in your inbox!\nOnce you've opened our private chat you can use only these commands:\n${supportedCommandsToString()}`).catch(() => {
+				msg.author.send(`**I haven't enough permission** to reply you in ${msg.guild.name} - #${msg.channel.name}, but no problem!\nHere you can use these commands:\n${supportedCommandsToString()}`);
+			});
 			db.setLastCommand(user.id, { cmd: 'started', arg: '' });
 		}
 	}
@@ -29,7 +33,7 @@ module.exports = msg => {
 		if (user.lastCommand.cmd) {
 			//Super commands (cancel, play, end and help)
 			if (txt === 'cancel') {
-				if (user.lastCommand.cmd === 'matchmakingStarted') {
+				if (user.isPlaying) {
 					let wasMatched = db.setLastCommand(user.id, { cmd: 'matchmakingCancelled', arg: '' });
 					if (wasMatched)
 						chat.send(`I'll ask your opponent if he wants to cancel too!`);
@@ -54,8 +58,10 @@ module.exports = msg => {
 			}
 			if (txt === 'end') {
 				if (user.isPlaying) {
-					chat.send(`Okk, **who has won?** Type 'I'/'we' if you've won, 'he'/'they' if you've lost or 'draw' if you've drew.`);
-					db.setLastCommand(user.id, { cmd: 'askForReport', arg: '' });
+					if(db.setLastCommand(user.id, { cmd: 'askForReport', arg: '' }))
+						chat.send(`Okk, **who has won?** Type 'I'/'we' if you've won, 'he'/'they' if you've lost or 'draw' if you've drew.`);
+					else
+						chat.send(`You can't report if you aren't matched! If you want to quit type 'cancel'.`);
 				}
 				else {
 					chat.send(`**You are NOT in a match!** To find one type 'play'.`);
